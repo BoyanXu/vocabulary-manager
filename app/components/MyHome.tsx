@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
 import './MyHome.css';
-import ImportLayout from '../containers/ImportPage'
+import ImportLayout from './ImportPhase';
 import { Layout, Menu, Icon, Avatar } from 'antd';
 
 const { Header, Sider } = Layout;
