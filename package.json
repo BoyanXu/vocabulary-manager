@@ -269,6 +269,7 @@
     "history": "^4.7.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-dropzone": "^10.1.7",
     "react-hot-loader": "^4.6.3",
     "react-redux": "^6.0.0",
     "react-router": "^4.3.1",

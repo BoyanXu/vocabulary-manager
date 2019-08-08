@@ -1,11 +1,10 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
 import './MyHome.css';
-import ImportPage from '../containers/ImportPage'
-import { Layout, Menu, Icon, Avatar, Steps } from 'antd';
+import ImportLayout from '../containers/ImportPage'
+import { Layout, Menu, Icon, Avatar } from 'antd';
 
-const { Header, Footer, Sider } = Layout;
-const { Step } = Steps;
+const { Header, Sider } = Layout;
 
 export default class MyHome extends React.Component {
   state = {
@@ -52,20 +51,8 @@ export default class MyHome extends React.Component {
           </Menu>
         </Sider>
 
-        <Layout style={{ marginLeft: 200 }}>
-          <Header style={{ background: '#fff', width: '100%', paddingTop:"1.5vh", paddingBottom:"1.5vh", minHeight: "13vh", alignContent: 'center', color: '#f542b9' }}>
-            <Steps current={0}>
-              <Step title="Finished" description="This is a description." />
-              <Step title="In Progress" description="This is a description." />
-              <Step title="Waiting" description="This is a description." />
-            </Steps>
-          </Header>
+        <ImportLayout/>
 
-          <ImportPage/>
-
-
-          <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-        </Layout>
       </Layout>
     );
   }
