@@ -1,7 +1,8 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
-import { Layout, Empty, Table, message, Steps, Icon, Button } from 'antd';
+import { Layout, Empty, message, Steps } from 'antd';
 import { useDropzone } from 'react-dropzone';
+import EditableTable from './EditableTable';
 
 const { useCallback } = React;
 const { Step } = Steps;
@@ -89,93 +90,34 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
 
   pushNewList(newListObj) {
     const latestList = this.state.loadedList.slice();
-    newListObj.vocabulary.forEach( vocabualryObj => { vocabualryObj.key = this.generateKey() } )
+    newListObj.vocabulary.forEach(vocabualryObj => {
+      vocabualryObj.key = this.generateKey();
+    });
     console.log('The newlist object supposed to have unique key, but is: ');
     console.log(newListObj);
 
     this.setState({ loadedList: latestList.concat(newListObj.vocabulary) });
 
     console.log('After push, this.state.loadedlist is: ');
-    console.log(this.state.loadedList)
+    console.log(this.state.loadedList);
   }
 
   openStepFinish() {
     this.setState({ atStep: 1 });
   }
 
-  generateKey(){
+  generateKey() {
     let latestKey: number = this.state.keyFactory;
-    this.setState({keyFactory: latestKey+1}　);
+    this.setState({ keyFactory: latestKey + 1 });
     return latestKey + 1;
   }
 
-  refreshKeyFactory(){
-    this.setState({ keyFactory: 0});
+  refreshKeyFactory() {
+    this.setState({ keyFactory: 0 });
   }
 
 
   render() {
-
-    type sortOrder = "ascend" | "descend" ;
-    let ascend: sortOrder = "ascend" as sortOrder;
-    let descend: sortOrder = "descend" as sortOrder;
-
-    type align = "left" | "center" | "right";
-    let center: align = "center" as align;
-
-    const vocabularyTableHeader = [
-      {
-        title: 'Vocabulary',
-        dataIndex: 'vocabulary',
-        key: 'vocabulary',
-        width: '15%',
-        className: styles.vocabularyColumn,
-        defaultSortOrder: ascend,
-        sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0)  ,
-      },
-      {
-        title: 'Sentence',
-        dataIndex: 'sentence',
-        key: 'sentence',
-        width: '60%',
-        className: styles.sentenceColumn,
-        render: (sentence: string, thisRow) => {
-            {
-              let reExp = new RegExp(thisRow.vocabularyOrign, "g");
-              let sentenceParts: Array<string> = sentence.split(reExp);
-              if(sentence !== ''){
-              return (
-                <span>
-                  { sentenceParts[0] } <span className={styles.emphasize} > {thisRow.vocabularyOrign} </span> { sentenceParts.slice(1).join("") }
-                </span>
-              )} else { return null }
-            }
-        }
-      },
-      {
-        title: 'Date',
-        dataIndex: 'time',
-        key: 'time',
-        align: center,
-        width: '20%',
-        defaultSortOrder: descend,
-        sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time) ,
-      },
-      {
-        title: 'Url',
-        dataIndex: 'url',
-        key: 'url',
-        align: center,
-        width: '15%',
-        render: url => (
-            <div>
-              <Button type="primary" href={url} target="_blank">
-                <Icon type="link" />
-              </Button>
-            </div>
-            )
-      }
-    ];
 
     return (
 
@@ -195,25 +137,17 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
             <Step title="Import" description="Import to local database."/>
           </Steps>
         </Header>
-          <Content style={{ margin: '24px 16px 0 16px', height: '85vh', overflow: 'auto' }}>
-            <div style={{ padding: 24, background: '#fff', textAlign: 'center', color: '#001829' }}>
-              <MyDropzone pushNewList={this.pushNewList} openStepFinish={this.openStepFinish}/>
-              {this.state.atStep > 0 &&
-                <Table dataSource={this.state.loadedList} columns={vocabularyTableHeader} pagination={{ pageSize: 10 }}
-                       expandedRowRender={ (record) => {
-                         if(record.paragraph !== ''){
-                           let reExp = new RegExp(record.vocabularyOrign, "g");
-                           let paragraphParts: Array<string> = record.paragraph.split(reExp);
-                           return(
-                             <p style={{ margin: 0, fontSize: 17.5, fontFamily: "Arial" }}>
-                               { paragraphParts[0] } <span className={styles.emphasize} > {record.vocabularyOrign} </span> { paragraphParts.slice(1).join("") }
-                             </p>)} else { return null }
-                       }}
-                />
-              }
+        <Content style={{ margin: '24px 16px 0 16px', height: '85vh', overflow: 'auto' }}>
+          <div style={{ padding: 24, background: '#fff', textAlign: 'center', color: '#001829' }}>
+            <MyDropzone pushNewList={this.pushNewList} openStepFinish={this.openStepFinish}/>
+            {this.state.atStep > 0 &&
+            <div>
+              <EditableTable dataSource={this.state.loadedList}/>
             </div>
-          </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+            }
+          </div>
+        </Content>
+        <Footer style={{ textAlign: 'center' }}> 2019 Made by Boyan Xu</Footer>
       </Layout>
 
     );
