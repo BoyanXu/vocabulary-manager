@@ -28,7 +28,6 @@ function MyDropzone(props: DropzoneProps) {
       fileReader.onload = () => {
         const listAsText = fileReader.result;
         if (typeof listAsText === 'string') {
-          console.log(JSON.parse(listAsText));
           loadedCounter += 1;
           props.pushNewList(JSON.parse(listAsText));
 
@@ -71,6 +70,7 @@ type ImportPhaseProps = {};
 
 type ImportPhaseStates = {
   atStep: number,
+  keyFactory: number,
   loadedList: Array<Object>
 };
 
@@ -80,20 +80,37 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
 
   constructor(props: ImportPhaseProps) {
     super(props);
-    this.state = { atStep: 0, loadedList: [] };
+    this.state = { atStep: 0, keyFactory: 0, loadedList: [] };
     this.pushNewList = this.pushNewList.bind(this);
     this.openStepFinish = this.openStepFinish.bind(this);
+    this.generateKey = this.generateKey.bind(this);
+    this.refreshKeyFactory = this.refreshKeyFactory.bind(this);
   }
 
   pushNewList(newListObj) {
     const latestList = this.state.loadedList.slice();
+    newListObj.vocabulary.forEach( vocabualryObj => { vocabualryObj.key = this.generateKey() } )
+    console.log('The newlist object supposed to have unique key, but is: ');
+    console.log(newListObj);
+
     this.setState({ loadedList: latestList.concat(newListObj.vocabulary) });
+
+    console.log('After push, this.state.loadedlist is: ');
+    console.log(this.state.loadedList)
   }
 
   openStepFinish() {
-    console.log('this.state.loadedList ==');
-    console.log(this.state.loadedList);
     this.setState({ atStep: 1 });
+  }
+
+  generateKey(){
+    let latestKey: number = this.state.keyFactory;
+    this.setState({keyFactory: latestKey+1}　);
+    return latestKey + 1;
+  }
+
+  refreshKeyFactory(){
+    this.setState({ keyFactory: 0});
   }
 
 
@@ -124,18 +141,14 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
         className: styles.sentenceColumn,
         render: (sentence: string, thisRow) => {
             {
-              console.log("This row is: ");
-              console.log(thisRow);
               let reExp = new RegExp(thisRow.vocabularyOrign, "g");
               let sentenceParts: Array<string> = sentence.split(reExp);
-              console.log("Sliced sentences are: ");
-              console.log(sentenceParts);
-              console.log("Sentence cell should be rendered then");
+              if(sentence !== ''){
               return (
                 <span>
                   { sentenceParts[0] } <span className={styles.emphasize} > {thisRow.vocabularyOrign} </span> { sentenceParts.slice(1).join("") }
                 </span>
-              )
+              )} else { return null }
             }
         }
       },
@@ -186,17 +199,17 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
             <div style={{ padding: 24, background: '#fff', textAlign: 'center', color: '#001829' }}>
               <MyDropzone pushNewList={this.pushNewList} openStepFinish={this.openStepFinish}/>
               {this.state.atStep > 0 &&
-                <Table dataSource={this.state.loadedList} columns={vocabularyTableHeader}
+                <Table dataSource={this.state.loadedList} columns={vocabularyTableHeader} pagination={{ pageSize: 10 }}
                        expandedRowRender={ (record) => {
-                         let reExp = new RegExp(record.vocabularyOrign, "g");
-                         let paragraphParts: Array<string> = record.paragraph.split(reExp);
-                         return(
-                           <p style={{ margin: 0, fontSize: 18, fontFamily: "Arial" }}>
-                             { paragraphParts[0] } <span className={styles.emphasize} > {record.vocabularyOrign} </span> { paragraphParts.slice(1).join("") }
-                           </p>
-                         )}
-                       }
-                       pagination={{ pageSize: 10 }}  />
+                         if(record.paragraph !== ''){
+                           let reExp = new RegExp(record.vocabularyOrign, "g");
+                           let paragraphParts: Array<string> = record.paragraph.split(reExp);
+                           return(
+                             <p style={{ margin: 0, fontSize: 17.5, fontFamily: "Arial" }}>
+                               { paragraphParts[0] } <span className={styles.emphasize} > {record.vocabularyOrign} </span> { paragraphParts.slice(1).join("") }
+                             </p>)} else { return null }
+                       }}
+                />
               }
             </div>
           </Content>
