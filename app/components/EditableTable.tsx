@@ -1,6 +1,6 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Input, Button, Popconfirm, Form, Icon } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Icon, Tooltip} from 'antd';
 const styles = require('./EditableTable.css');
 
 const low = require('lowdb');
@@ -154,16 +154,25 @@ export default class EditableTable extends React.Component<EditableTableProps, E
           title: 'Sentence',
           dataIndex: 'sentence',
           key: 'sentence',
+          editable: true,
           width: '60%',
           className: styles.sentenceColumn,
           render: (sentence: string, thisRow) => {
             {
-              let reExp = new RegExp(thisRow.vocabularyOrign, "g");
+              if(!sentence.includes(thisRow.vocabularyOrign) && !sentence.includes(thisRow.vocabulary)){
+                return (
+                  <span>
+                    {sentence}
+                  </span>
+                )
+              }
+              let reExp = (sentence.includes(thisRow.vocabulary)) ? new RegExp(thisRow.vocabulary, "g") : new RegExp(thisRow.vocabularyOrign, "g");
+              let occurrence = (sentence.includes(thisRow.vocabulary)) ? thisRow.vocabulary : thisRow.vocabularyOrign;
               let sentenceParts: Array<string> = sentence.split(reExp);
               if(sentence !== ''){
                 return (
                   <span>
-                  { sentenceParts[0] } <span className={styles.emphasize} > {thisRow.vocabularyOrign} </span> { sentenceParts.slice(1).join("") }
+                  { sentenceParts[0] }<span className={styles.emphasize} >{occurrence}</span>{ sentenceParts.slice(1).join("") }
                 </span>
                 )} else { return null }
             }
@@ -291,13 +300,13 @@ export default class EditableTable extends React.Component<EditableTableProps, E
           }}
         />
         <Popconfirm title="Sure to import?" onConfirm={() => this.import2db()}>
+          <Tooltip placement="right" title={"Click to import current list to your database."}>
           <Button  href="#" type="primary" icon="import" size='large' style={{ float: 'left', marginTop: '-50px'}} >
             Import
           </Button>
+          </Tooltip>
         </Popconfirm>
       </div>
-
-
     );
   }
 }

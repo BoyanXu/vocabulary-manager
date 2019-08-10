@@ -1,6 +1,7 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Input, Button, Popconfirm, Form, Icon, message } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip } from 'antd';
+import Highlighter from 'react-highlight-words';
 const styles = require('./SearchableEditableTable.css');
 
 const low = require('lowdb');
@@ -123,6 +124,7 @@ type SearchableEditableTableProps = {
 type SearchableEditableTableStates = {
   dataSource: any,
   columns: any,
+  searchText: string,
 };
 
 type sortOrder = "ascend" | "descend" ;
@@ -133,10 +135,12 @@ type align = "left" | "center" | "right";
 const center: align = "center" as align;
 
 export default class SearchableEditableTable extends React.Component<SearchableEditableTableProps, SearchableEditableTableStates> {
+  private searchInput: any;
   constructor(props) {
     super(props);
     this.state = {
       dataSource: db.get('vocabularies').value(),
+      searchText: '',
       columns: [
         {
           title: 'Vocabulary',
@@ -147,21 +151,32 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           className: styles.vocabularyColumn,
           defaultSortOrder: ascend,
           sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0)  ,
+          ...this.getColumnSearchProps('vocabulary'),
         },
         {
           title: 'Sentence',
           dataIndex: 'sentence',
           key: 'sentence',
+          editable: true,
           width: '60%',
           className: styles.sentenceColumn,
+          ...this.getColumnSearchProps('sentence'),
           render: (sentence: string, thisRow) => {
             {
-              let reExp = new RegExp(thisRow.vocabularyOrign, "g");
+              if(!sentence.includes(thisRow.vocabularyOrign) && !sentence.includes(thisRow.vocabulary)){
+                return (
+                  <span>
+                    {sentence}
+                  </span>
+                )
+              }
+              let reExp = (sentence.includes(thisRow.vocabulary)) ? new RegExp(thisRow.vocabulary, "g") : new RegExp(thisRow.vocabularyOrign, "g");
+              let occurrence = (sentence.includes(thisRow.vocabulary)) ? thisRow.vocabulary : thisRow.vocabularyOrign;
               let sentenceParts: Array<string> = sentence.split(reExp);
               if(sentence !== ''){
                 return (
                   <span>
-                  { sentenceParts[0] } <span className={styles.emphasize} > {thisRow.vocabularyOrign} </span> { sentenceParts.slice(1).join("") }
+                  { sentenceParts[0] }<span className={styles.emphasize} >{occurrence}</span>{ sentenceParts.slice(1).join("") }
                 </span>
                 )} else { return null }
             }
@@ -206,7 +221,14 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.getColumnSearchProps = this.getColumnSearchProps.bind(this)
+    this.reload = this.reload.bind(this)
   }
+
+  reload = () => {
+    this.setState({ dataSource: db.get('vocabularies').value() });
+    message.success(`Successfully reloaded.`, 2);
+  };
 
   handleDelete = record => {
     db.read();
@@ -226,6 +248,67 @@ export default class SearchableEditableTable extends React.Component<SearchableE
       .write();
     this.setState({ dataSource: db.get('vocabularies').value() });
     message.success(` "${record.vocabulary}" got updated.`, 2);
+  };
+
+  getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text => (
+      <Highlighter
+        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        searchWords={[this.state.searchText]}
+        autoEscape
+        textToHighlight={text.toString()}
+      />
+    ),
+  });
+
+
+  handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState({ searchText: selectedKeys[0] });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({ searchText: '' });
   };
 
   render() {
@@ -253,6 +336,13 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     });
     return (
       <div className="table-operations" >
+        <Tooltip placement="right" title={"Click to refresh after importing vocabularies."}>
+          <Button  onClick={this.reload} type="primary" icon="import" size='large' style={{ float: 'left', marginBottom: '10px' }} >
+           Refresh
+         </Button>
+        </Tooltip>
+         <Divider />
+
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
@@ -275,3 +365,4 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     );
   }
 }
+
