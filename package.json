@@ -22,7 +22,6 @@
     "postinstall": "electron-builder install-app-deps package.json && yarn build-dll && opencollective-postinstall",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
-    "precommit": "lint-staged",
     "prestart": "yarn build",
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron ./app/main.dev.babel.js",
@@ -267,6 +266,7 @@
     "electron-updater": "^4.0.6",
     "eslint-plugin-flowtype": "^3.12.2",
     "history": "^4.7.2",
+    "lowdb": "^1.0.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-dropzone": "^10.1.7",
@@ -286,5 +286,10 @@
   "collective": {
     "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
-  "browserslist": "electron 1.6"
+  "browserslist": "electron 1.6",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
 }

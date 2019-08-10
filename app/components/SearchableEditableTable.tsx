@@ -1,7 +1,12 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Input, Button, Popconfirm, Form, Icon } from 'antd';
-const styles = require('./EditableTable.css');
+import { Table, Input, Button, Popconfirm, Form, Icon, message } from 'antd';
+const styles = require('./SearchableEditableTable.css');
+
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('vocabularyDB.json');
+const db = low(adapter);
 
 
 const EditableContext = React.createContext(undefined);
@@ -112,14 +117,12 @@ class EditableCell extends React.Component <EditableCellProps, EditableCellState
 }
 
 
-type EditableTableProps = {
-  dataSource: any,
+type SearchableEditableTableProps = {
 };
 
-type EditableTableStates = {
+type SearchableEditableTableStates = {
   dataSource: any,
   columns: any,
-  count: number
 };
 
 type sortOrder = "ascend" | "descend" ;
@@ -129,11 +132,11 @@ const descend: sortOrder = "descend" as sortOrder;
 type align = "left" | "center" | "right";
 const center: align = "center" as align;
 
-export default class EditableTable extends React.Component<EditableTableProps, EditableTableStates> {
+export default class SearchableEditableTable extends React.Component<SearchableEditableTableProps, SearchableEditableTableStates> {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: this.props.dataSource,
+      dataSource: db.get('vocabularies').value(),
       columns: [
         {
           title: 'Vocabulary',
@@ -194,33 +197,35 @@ export default class EditableTable extends React.Component<EditableTableProps, E
           width: '15%',
           render: (text, record) =>
             this.state.dataSource.length >= 1 ? (
-              <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
+              <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
                 <Button href="#" type="danger"> Delete </Button>
               </Popconfirm>
             ) : null,
         },
       ],
-      count: this.props.dataSource.length,
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
 
-  handleDelete = key => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
+  handleDelete = record => {
+    db.read();
+    db.get('vocabularies')
+      .remove({key: record.key})
+      .write();
+    this.setState({ dataSource: db.get('vocabularies').value() });
+    message.success(` "${record.vocabulary}" was deleted from your database.`, 2);
   };
 
-  handleSave = row => {
-    const newData = [...this.state.dataSource];
-    const index = newData.findIndex(item => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    console.log(newData);
-    this.setState({ dataSource: newData });
+  handleSave = record => {
+
+    db.read();
+    db.get('vocabularies')
+      .find({key: record.key})
+      .assign(record)
+      .write();
+    this.setState({ dataSource: db.get('vocabularies').value() });
+    message.success(` "${record.vocabulary}" got updated.`, 2);
   };
 
   render() {
@@ -247,23 +252,26 @@ export default class EditableTable extends React.Component<EditableTableProps, E
       };
     });
     return (
-      <Table
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        dataSource={dataSource}
-        columns={columns}
-        pagination={{ pageSize: 10 }}
-        expandedRowRender={ (record: any) => {
-          if(record.paragraph !== ''){
-            let reExp = new RegExp(record.vocabularyOrign, "g");
-            let paragraphParts: Array<string> = record.paragraph.split(reExp);
-            return(
-              <p style={{ margin: 0, fontSize: 17.5, fontFamily: "Arial" }}>
-                { paragraphParts[0] } <span className={styles.emphasize} > {record.vocabularyOrign} </span> { paragraphParts.slice(1).join("") }
-              </p>)} else { return null }
-        }}
-      />
+      <div className="table-operations" >
+        <Table
+          components={components}
+          rowClassName={() => 'editable-row'}
+          bordered
+          dataSource={dataSource}
+          columns={columns}
+          pagination={{ pageSize: 10 }}
+          expandedRowRender={ (record: any) => {
+            if(record.paragraph !== ''){
+              let reExp = new RegExp(record.vocabularyOrign, "g");
+              let paragraphParts: Array<string> = record.paragraph.split(reExp);
+              return(
+                <p style={{ margin: 0, fontSize: 17.5, fontFamily: "Arial" }}>
+                  { paragraphParts[0] } <span className={styles.emphasize} > {record.vocabularyOrign} </span> { paragraphParts.slice(1).join("") }
+                </p>)} else { return null }
+          }}
+        />
+      </div>
+
     );
   }
 }

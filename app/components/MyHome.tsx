@@ -2,21 +2,29 @@ import * as React from 'react';
 import 'antd/dist/antd.css';
 import './MyHome.css';
 import ImportLayout from './ImportPhase';
+import EditPhase from './EditPhase'
 import { Layout, Menu, Icon, Avatar } from 'antd';
 
 const { Header, Sider } = Layout;
 
-export default class MyHome extends React.Component {
-  state = {
-    originalVocabularies: [],
-    refactoredVocabularies: []
-  };
-  //
-  // toggle = () => {
-  //   this.setState({
-  //     collapsed: !this.state.collapsed,
-  //   });
-  // };
+type MyHomeProps = {};
+
+type MyHomeStates = {
+  atPhase: string,
+};
+
+export default class MyHome extends React.Component<MyHomeProps, MyHomeStates> {
+  constructor(props: MyHomeProps){
+    super(props);
+    this.state = { atPhase: 'importPhase' };
+    this.handlePhaseSwitch = this.handlePhaseSwitch.bind(this)
+  }
+
+  handlePhaseSwitch( { item, key, keyPath, domEvent } ){
+    console.log('Menu item selected, which is: ');
+    console.log({ item, key, keyPath, domEvent });
+    this.setState({atPhase: key});
+  }
 
   render() {
     return (
@@ -35,23 +43,27 @@ export default class MyHome extends React.Component {
             </Header>
           </Layout>
           <div className="logo"/>
-          <Menu theme="dark" mode="inline" style={{ marginTop: 10}} defaultSelectedKeys={['1']}>
-            <Menu.Item key="1">
-              <Icon type="import"/>
+          <Menu theme="dark" mode="inline" style={{ marginTop: 10}} defaultSelectedKeys={['importPhase']} onSelect={this.handlePhaseSwitch} >
+            <Menu.Item key="importPhase">
+              <Icon type="download"/>
               <span className="nav-text"> Import </span>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="editPhase">
               <Icon type="edit"/>
               <span className="nav-text"> Edit </span>
             </Menu.Item>
-            <Menu.Item key="3">
-              <Icon type="export"/>
+            <Menu.Item key="exportPhase">
+              <Icon type="upload"/>
               <span className="nav-text"> Export </span>
             </Menu.Item>
           </Menu>
         </Sider>
-
+        {this.state.atPhase === 'importPhase' &&
         <ImportLayout/>
+        }
+        {this.state.atPhase === 'editPhase' &&
+        <EditPhase/>
+        }
 
       </Layout>
     );

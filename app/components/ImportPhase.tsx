@@ -138,9 +138,9 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
           color: '#f542b9'
         }}>
           <Steps current={this.state.atStep}>
-            <Step title="Open File" description="Load vocabulary lists to import."/>
-            <Step title="Refactor" description=" did → do / apples → apple "/>
-            <Step title="Import" description="Import to local database."/>
+            <Step title="Drag" description="Drag .json file(s) below to import."/>
+            <Step title="Refactor" description=" Click vocabulary to refactor: did → do "/>
+            <Step title="Import" description="Press IMPORT button to import."/>
           </Steps>
         </Header>
         <Content style={{ margin: '24px 16px 0 16px', height: '85vh', overflow: 'auto' }}>
