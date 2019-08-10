@@ -86,6 +86,7 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
     this.openStepFinish = this.openStepFinish.bind(this);
     this.generateKey = this.generateKey.bind(this);
     this.refreshKeyFactory = this.refreshKeyFactory.bind(this);
+    this.importStepFinish = this.importStepFinish.bind(this);
   }
 
   pushNewList(newListObj) {
@@ -104,6 +105,11 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
 
   openStepFinish() {
     this.setState({ atStep: 1 });
+  }
+
+  importStepFinish() {
+    this.setState({ atStep: 0, keyFactory: 0, loadedList: []});
+    message.success(`Successfully imported.`, 2);
   }
 
   generateKey() {
@@ -141,13 +147,11 @@ export default class ImportPhase extends React.Component<ImportPhaseProps, Impor
           <div style={{ padding: 24, background: '#fff', textAlign: 'center', color: '#001829' }}>
             <MyDropzone pushNewList={this.pushNewList} openStepFinish={this.openStepFinish}/>
             {this.state.atStep > 0 &&
-            <div>
-              <EditableTable dataSource={this.state.loadedList}/>
-            </div>
+            <EditableTable dataSource={this.state.loadedList} importStepFinish={this.importStepFinish} />
             }
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}> 2019 Made by Boyan Xu</Footer>
+        <Footer style={{ textAlign: 'center' }}> 2019 Summer ❤️ Made by Boyan Xu</Footer>
       </Layout>
 
     );

@@ -3,6 +3,11 @@ import 'antd/dist/antd.css';
 import { Table, Input, Button, Popconfirm, Form, Icon } from 'antd';
 const styles = require('./EditableTable.css');
 
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('vocabularyDB.json');
+const db = low(adapter);
+
 
 const EditableContext = React.createContext(undefined);
 
@@ -114,12 +119,12 @@ class EditableCell extends React.Component <EditableCellProps, EditableCellState
 
 type EditableTableProps = {
   dataSource: any,
+  importStepFinish: () => void ;
 };
 
 type EditableTableStates = {
   dataSource: any,
   columns: any,
-  count: number
 };
 
 type sortOrder = "ascend" | "descend" ;
@@ -200,10 +205,10 @@ export default class EditableTable extends React.Component<EditableTableProps, E
             ) : null,
         },
       ],
-      count: this.props.dataSource.length,
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.import2db = this.import2db.bind(this);
   }
 
   handleDelete = key => {
@@ -222,6 +227,26 @@ export default class EditableTable extends React.Component<EditableTableProps, E
     console.log(newData);
     this.setState({ dataSource: newData });
   };
+
+  import2db(){
+
+    db.read();
+    db.defaults({ vocabularies:[] , count: 0 })
+      .write();
+    this.state.dataSource.forEach( (vocabulary) => {
+      db.update('count', n => n + 1)
+        .write();
+      vocabulary['key'] = db.get('count').value();
+      // console.log('The vocabulary object to push is: ');
+      // console.log(vocabulary);
+      db.get('vocabularies')
+        .push(vocabulary)
+        .write()
+    });
+    // console.log("After push, lowdb now has content: ");
+    // console.log(db.getState());
+    this.props.importStepFinish();
+  }
 
   render() {
     const { dataSource } = this.state;
@@ -247,6 +272,7 @@ export default class EditableTable extends React.Component<EditableTableProps, E
       };
     });
     return (
+      <div className="table-operations" >
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
@@ -264,6 +290,14 @@ export default class EditableTable extends React.Component<EditableTableProps, E
                 </p>)} else { return null }
           }}
         />
+        <Popconfirm title="Sure to import?" onConfirm={() => this.import2db()}>
+          <Button  href="#" type="primary" icon="import" size='large' style={{ float: 'left', marginTop: '-50px'}} >
+            Import
+          </Button>
+        </Popconfirm>
+      </div>
+
+
     );
   }
 }
