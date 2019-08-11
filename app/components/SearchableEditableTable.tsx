@@ -129,6 +129,11 @@ type SearchableEditableTableStates = {
   tableLoading: boolean,
 };
 
+function fetchData(){
+  db.read();
+  return db.get('vocabularies').value();
+}
+
 type sortOrder = 'ascend' | 'descend' ;
 const ascend: sortOrder = 'ascend' as sortOrder;
 const descend: sortOrder = 'descend' as sortOrder;
@@ -142,7 +147,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: db.get('vocabularies').value(),
+      dataSource: fetchData(),
       searchText: '',
       tableLoading: false,
       selectedRowKeys: [],
@@ -241,7 +246,11 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     let FileSync = require('lowdb/adapters/FileSync');
     let adapter = new FileSync('vocabularyDB.json');
     let db = low(adapter);
-    db.read();
+    db.read()
+      .update('count', n => n + 1)
+      .write();
+    console.log("reload called, the latest db count is: ");
+    console.log(db.get('vocabularies').value());
     this.setState({ dataSource: db.get('vocabularies').value(), tableLoading: true });
     setTimeout(() => {
       this.setState({ tableLoading: false });
