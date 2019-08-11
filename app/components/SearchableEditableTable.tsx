@@ -2,6 +2,7 @@ import * as React from 'react';
 import 'antd/dist/antd.css';
 import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
+
 const styles = require('./SearchableEditableTable.css');
 
 let low = require('lowdb');
@@ -35,9 +36,9 @@ type EditableCellStates = {
 
 class EditableCell extends React.Component <EditableCellProps, EditableCellStates> {
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = {  editing: false  };
+    this.state = { editing: false };
     this.toggleEdit = this.toggleEdit.bind(this);
     this.save = this.save.bind(this);
     this.renderCell = this.renderCell.bind(this);
@@ -74,11 +75,11 @@ class EditableCell extends React.Component <EditableCellProps, EditableCellState
           rules: [
             {
               required: true,
-              message: `${title} is required.`,
-            },
+              message: `${title} is required.`
+            }
           ],
-          initialValue: record[dataIndex],
-        })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)}
+          initialValue: record[dataIndex]
+        })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save}/>)}
       </Form.Item>
     ) : (
       <div
@@ -118,8 +119,7 @@ class EditableCell extends React.Component <EditableCellProps, EditableCellState
 }
 
 
-type SearchableEditableTableProps = {
-};
+type SearchableEditableTableProps = {};
 
 type SearchableEditableTableStates = {
   dataSource: any,
@@ -129,15 +129,16 @@ type SearchableEditableTableStates = {
   tableLoading: boolean,
 };
 
-type sortOrder = "ascend" | "descend" ;
-const ascend: sortOrder = "ascend" as sortOrder;
-const descend: sortOrder = "descend" as sortOrder;
+type sortOrder = 'ascend' | 'descend' ;
+const ascend: sortOrder = 'ascend' as sortOrder;
+const descend: sortOrder = 'descend' as sortOrder;
 
-type align = "left" | "center" | "right";
-const center: align = "center" as align;
+type align = 'left' | 'center' | 'right';
+const center: align = 'center' as align;
 
 export default class SearchableEditableTable extends React.Component<SearchableEditableTableProps, SearchableEditableTableStates> {
   private searchInput: any;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -154,8 +155,8 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           width: '15%',
           className: styles.vocabularyColumn,
           defaultSortOrder: ascend,
-          sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0)  ,
-          ...this.getColumnSearchProps('vocabulary'),
+          sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0),
+          ...this.getColumnSearchProps('vocabulary')
         },
         {
           title: 'Sentence',
@@ -167,22 +168,26 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           ...this.getColumnSearchProps('sentence'),
           render: (sentence: string, thisRow) => {
             {
-              if(!sentence.includes(thisRow.vocabularyOrign) && !sentence.includes(thisRow.vocabulary)){
+              if (!sentence.includes(thisRow.vocabularyOrign) && !sentence.includes(thisRow.vocabulary)) {
                 return (
                   <span>
                     {sentence}
                   </span>
-                )
+                );
               }
-              let reExp = (sentence.includes(thisRow.vocabulary)) ? new RegExp(thisRow.vocabulary, "g") : new RegExp(thisRow.vocabularyOrign, "g");
+              let reExp = (sentence.includes(thisRow.vocabulary)) ? new RegExp(thisRow.vocabulary, 'g') : new RegExp(thisRow.vocabularyOrign, 'g');
               let occurrence = (sentence.includes(thisRow.vocabulary)) ? thisRow.vocabulary : thisRow.vocabularyOrign;
               let sentenceParts: Array<string> = sentence.split(reExp);
-              if(sentence !== ''){
+              if (sentence !== '') {
                 return (
                   <span>
-                  { sentenceParts[0] }<span className={styles.emphasize} >{occurrence}</span>{ sentenceParts.slice(1).join("") }
+                  {sentenceParts[0]}<span
+                    className={styles.emphasize}>{occurrence}</span>{sentenceParts.slice(1).join('')}
                 </span>
-                )} else { return null }
+                );
+              } else {
+                return null;
+              }
             }
           }
         },
@@ -193,7 +198,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           align: center,
           width: '10%',
           defaultSortOrder: descend,
-          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time) ,
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
           title: 'Url',
@@ -204,7 +209,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           render: url => (
             <div>
               <Button type="primary" href={url} target="_blank">
-                <Icon type="link" />
+                <Icon type="link"/>
               </Button>
             </div>
           )
@@ -219,9 +224,9 @@ export default class SearchableEditableTable extends React.Component<SearchableE
               <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
                 <Button href="#" type="danger"> Delete </Button>
               </Popconfirm>
-            ) : null,
-        },
-      ],
+            ) : null
+        }
+      ]
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
@@ -237,9 +242,9 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     let adapter = new FileSync('vocabularyDB.json');
     let db = low(adapter);
     db.read();
-    this.setState({ dataSource: db.get('vocabularies').value() , tableLoading: true});
+    this.setState({ dataSource: db.get('vocabularies').value(), tableLoading: true });
     setTimeout(() => {
-      this.setState({ tableLoading: false});
+      this.setState({ tableLoading: false });
       message.success(`Successfully reloaded.`, 2);
     }, 300);
   };
@@ -247,11 +252,11 @@ export default class SearchableEditableTable extends React.Component<SearchableE
   handleDelete = record => {
     db.read();
     db.get('vocabularies')
-      .remove({key: record.key})
+      .remove({ key: record.key })
       .write();
     this.setState({ dataSource: db.get('vocabularies').value() });
-    const {selectedRowKeys} = this.state;
-    this.setState({ selectedRowKeys: selectedRowKeys.filter(key => key!=record.key) });
+    const { selectedRowKeys } = this.state;
+    this.setState({ selectedRowKeys: selectedRowKeys.filter(key => key != record.key) });
     message.success(` "${record.vocabulary}" was deleted from your database.`, 2);
   };
 
@@ -259,7 +264,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
 
     db.read();
     db.get('vocabularies')
-      .find({key: record.key})
+      .find({ key: record.key })
       .assign(record)
       .write();
     this.setState({ dataSource: db.get('vocabularies').value() });
@@ -294,7 +299,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }}/>
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -313,7 +318,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
         autoEscape
         textToHighlight={text.toString()}
       />
-    ),
+    )
   });
 
 
@@ -333,14 +338,14 @@ export default class SearchableEditableTable extends React.Component<SearchableE
   };
 
   batchDelete = () => {
-    const {selectedRowKeys} = this.state;
+    const { selectedRowKeys } = this.state;
     const amount = selectedRowKeys.length;
-    selectedRowKeys.forEach( selectedRowKey => {
+    selectedRowKeys.forEach(selectedRowKey => {
       db.read();
       db.get('vocabularies')
-        .remove({key: selectedRowKey})
+        .remove({ key: selectedRowKey })
         .write();
-    } );
+    });
     this.setState({ dataSource: db.get('vocabularies').value() });
     this.setState({ selectedRowKeys: [] });
     message.success(` ${amount} vocabular(y/ies) were deleted from your database.`, 2);
@@ -350,8 +355,8 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     const components = {
       body: {
         row: EditableFormRow,
-        cell: EditableCell,
-      },
+        cell: EditableCell
+      }
     };
     const columns = this.state.columns.map(col => {
       if (!col.editable) {
@@ -364,47 +369,53 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
-          handleSave: this.handleSave,
-        }),
+          handleSave: this.handleSave
+        })
       };
     });
-    const {selectedRowKeys} = this.state;
+    const { selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange,
+      onChange: this.onSelectChange
     };
 
     return (
-      <div className="table-operations" >
-        <Tooltip placement="topLeft" title={"Click to refresh after importing vocabularies."}>
-          <Button  onClick={this.reload} type="primary" icon="sync" size='large' style={{ float: 'left', marginBottom: '10px' }} >
-           Refresh List
-         </Button>
+      <div className="table-operations">
+        <Tooltip placement="topLeft" title={'Click to refresh after importing vocabularies.'}>
+          <Button onClick={this.reload} type="primary" icon="sync" size='large'
+                  style={{ float: 'left', marginBottom: '10px' }}>
+            Refresh List
+          </Button>
         </Tooltip>
-        <Tooltip placement="topRight" title={"Click to delete all the selected vocabularies."}>
-        <Button  onClick={this.batchDelete} type="danger" icon="delete" size='large' style={{ float: 'left', marginLeft: '10px', marginBottom: '10px' }} >
-          Batch Delete
-        </Button>
+        <Tooltip placement="topRight" title={'Click to delete all the selected vocabularies.'}>
+          <Button onClick={this.batchDelete} type="danger" icon="delete" size='large'
+                  style={{ float: 'left', marginLeft: '10px', marginBottom: '10px' }}>
+            Batch Delete
+          </Button>
         </Tooltip>
-        <Divider />
+        <Divider/>
 
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
-          rowSelection={ rowSelection }
+          rowSelection={rowSelection}
           bordered
-          loading = {this.state.tableLoading}
+          loading={this.state.tableLoading}
           dataSource={this.state.dataSource}
           columns={columns}
           pagination={{ pageSize: 30 }}
-          expandedRowRender={ (record: any) => {
-            if(record.paragraph !== ''){
-              let reExp = new RegExp(record.vocabularyOrign, "g");
+          expandedRowRender={(record: any) => {
+            if (record.paragraph !== '') {
+              let reExp = new RegExp(record.vocabularyOrign, 'g');
               let paragraphParts: Array<string> = record.paragraph.split(reExp);
-              return(
-                <p style={{ margin: 0, fontSize: 17.5, fontFamily: "Arial" }}>
-                  { paragraphParts[0] } <span className={styles.emphasize} > {record.vocabularyOrign} </span> { paragraphParts.slice(1).join("") }
-                </p>)} else { return null }
+              return (
+                <p style={{ margin: 0, fontSize: 17.5, fontFamily: 'Arial' }}>
+                  {paragraphParts[0]} <span
+                  className={styles.emphasize}> {record.vocabularyOrign} </span> {paragraphParts.slice(1).join('')}
+                </p>);
+            } else {
+              return null;
+            }
           }}
         />
       </div>
