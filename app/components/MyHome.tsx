@@ -2,7 +2,8 @@ import * as React from 'react';
 import 'antd/dist/antd.css';
 import './MyHome.css';
 import ImportLayout from './ImportPhase';
-import EditPhase from './EditPhase'
+import EditPhase from './EditPhase';
+import ExportPhase from './ExportPhase';
 import { Layout, Menu, Icon, Avatar } from 'antd';
 
 const { Header, Sider } = Layout;
@@ -21,8 +22,8 @@ export default class MyHome extends React.Component<MyHomeProps, MyHomeStates> {
   }
 
   handlePhaseSwitch( { item, key, keyPath, domEvent } ){
-    console.log('Menu item selected, which is: ');
-    console.log({ item, key, keyPath, domEvent });
+    // console.log('Menu item selected, which is: ');
+    // console.log({ item, key, keyPath, domEvent });
     this.setState({atPhase: key});
   }
 
@@ -63,6 +64,9 @@ export default class MyHome extends React.Component<MyHomeProps, MyHomeStates> {
         }
         {this.state.atPhase === 'editPhase' &&
         <EditPhase/>
+        }
+        {this.state.atPhase === 'exportPhase' &&
+        <ExportPhase/>
         }
 
       </Layout>

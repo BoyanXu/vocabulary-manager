@@ -140,7 +140,7 @@ function fetchData(){
 type align = 'left' | 'center' | 'right';
 const center: align = 'center' as align;
 
-export default class SearchableEditableTable extends React.Component<SearchableEditableTableProps, SearchableEditableTableStates> {
+export default class DateSelectableTable extends React.Component<SearchableEditableTableProps, SearchableEditableTableStates> {
   private searchInput: any;
 
   constructor(props) {
