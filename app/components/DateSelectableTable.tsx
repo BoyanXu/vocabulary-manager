@@ -377,11 +377,11 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
         })
       };
     });
-    const { selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange
-    };
+    // const { selectedRowKeys } = this.state;
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: this.onSelectChange
+    // };
 
     return (
       <div className="table-operations">
@@ -402,25 +402,25 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
-          rowSelection={rowSelection}
+          // rowSelection={rowSelection}
           bordered
           loading={this.state.tableLoading}
           dataSource={this.state.dataSource}
           columns={columns}
           pagination={{ pageSize: 30 }}
-          expandedRowRender={(record: any) => {
-            if (record.paragraph !== '') {
-              let reExp = new RegExp(record.vocabularyOrign, 'g');
-              let paragraphParts: Array<string> = record.paragraph.split(reExp);
-              return (
-                <p style={{ margin: 0, fontSize: 17.5, fontFamily: 'Arial' }}>
-                  {paragraphParts[0]} <span
-                  className={styles.emphasize}> {record.vocabularyOrign} </span> {paragraphParts.slice(1).join('')}
-                </p>);
-            } else {
-              return null;
-            }
-          }}
+          // expandedRowRender={(record: any) => {
+          //   if (record.paragraph !== '') {
+          //     let reExp = new RegExp(record.vocabularyOrign, 'g');
+          //     let paragraphParts: Array<string> = record.paragraph.split(reExp);
+          //     return (
+          //       <p style={{ margin: 0, fontSize: 17.5, fontFamily: 'Arial' }}>
+          //         {paragraphParts[0]} <span
+          //         className={styles.emphasize}> {record.vocabularyOrign} </span> {paragraphParts.slice(1).join('')}
+          //       </p>);
+          //   } else {
+          //     return null;
+          //   }
+          // }}
         />
       </div>
 
