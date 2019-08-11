@@ -237,13 +237,11 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     let adapter = new FileSync('vocabularyDB.json');
     let db = low(adapter);
     db.read();
-    console.log("The latest dataSource is: ");
-    console.log(db.get('vocabularies').value());
     this.setState({ dataSource: db.get('vocabularies').value() , tableLoading: true});
     setTimeout(() => {
       this.setState({ tableLoading: false});
       message.success(`Successfully reloaded.`, 2);
-    }, 1000);
+    }, 300);
   };
 
   handleDelete = record => {
