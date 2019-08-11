@@ -134,9 +134,8 @@ function fetchData(){
   return db.get('vocabularies').value();
 }
 
-type sortOrder = 'ascend' | 'descend' ;
-const ascend: sortOrder = 'ascend' as sortOrder;
-const descend: sortOrder = 'descend' as sortOrder;
+// type sortOrder = 'ascend' | 'descend' ;
+// const descend: sortOrder = 'descend' as sortOrder;
 
 type align = 'left' | 'center' | 'right';
 const center: align = 'center' as align;
@@ -159,7 +158,6 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           editable: true,
           width: '15%',
           className: styles.vocabularyColumn,
-          defaultSortOrder: ascend,
           sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0),
           ...this.getColumnSearchProps('vocabulary')
         },
@@ -202,7 +200,6 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           key: 'time',
           align: center,
           width: '10%',
-          defaultSortOrder: descend,
           sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
         },
         {
@@ -236,27 +233,27 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.getColumnSearchProps = this.getColumnSearchProps.bind(this);
-    this.reload = this.reload.bind(this);
+    // this.reload = this.reload.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
     this.batchDelete = this.batchDelete.bind(this);
   }
 
-  reload = () => {
-    let low = require('lowdb');
-    let FileSync = require('lowdb/adapters/FileSync');
-    let adapter = new FileSync('vocabularyDB.json');
-    let db = low(adapter);
-    db.read()
-      .update('count', n => n + 1)
-      .write();
-    console.log("reload called, the latest db count is: ");
-    console.log(db.get('vocabularies').value());
-    this.setState({ dataSource: db.get('vocabularies').value(), tableLoading: true });
-    setTimeout(() => {
-      this.setState({ tableLoading: false });
-      message.success(`Successfully reloaded.`, 2);
-    }, 300);
-  };
+  // reload = () => {
+  //   let low = require('lowdb');
+  //   let FileSync = require('lowdb/adapters/FileSync');
+  //   let adapter = new FileSync('vocabularyDB.json');
+  //   let db = low(adapter);
+  //   db.read()
+  //     .update('count', n => n + 1)
+  //     .write();
+  //   console.log("reload called, the latest db count is: ");
+  //   console.log(db.get('vocabularies').value());
+  //   this.setState({ dataSource: db.get('vocabularies').value(), tableLoading: true });
+  //   setTimeout(() => {
+  //     this.setState({ tableLoading: false });
+  //     message.success(`Successfully reloaded.`, 2);
+  //   }, 300);
+  // };
 
   handleDelete = record => {
     db.read();
@@ -390,16 +387,16 @@ export default class SearchableEditableTable extends React.Component<SearchableE
 
     return (
       <div className="table-operations">
-        <Tooltip placement="topLeft" title={'Click to refresh after importing vocabularies.'}>
-          <Button onClick={this.reload} type="primary" icon="sync" size='large'
-                  style={{ float: 'left', marginBottom: '10px' }}>
-            Refresh List
-          </Button>
-        </Tooltip>
+        {/*<Tooltip placement="topLeft" title={'Click to refresh after importing vocabularies.'}>*/}
+        {/*  <Button onClick={this.reload} type="primary" icon="sync" size='large'*/}
+        {/*          style={{ float: 'left', marginBottom: '10px' }}>*/}
+        {/*    Refresh List*/}
+        {/*  </Button>*/}
+        {/*</Tooltip>*/}
         <Tooltip placement="topRight" title={'Click to delete all the selected vocabularies.'}>
-          <Button onClick={this.batchDelete} type="danger" icon="delete" size='large'
+          <Button onClick={this.batchDelete} type="danger" icon="delete" size='large' ghost={true}
                   style={{ float: 'left', marginLeft: '10px', marginBottom: '10px' }}>
-            Batch Delete
+            Delete Selected
           </Button>
         </Tooltip>
         <Divider/>
