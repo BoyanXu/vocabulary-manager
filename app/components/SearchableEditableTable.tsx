@@ -4,10 +4,10 @@ import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip
 import Highlighter from 'react-highlight-words';
 const styles = require('./SearchableEditableTable.css');
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('vocabularyDB.json');
-const db = low(adapter);
+let low = require('lowdb');
+let FileSync = require('lowdb/adapters/FileSync');
+let adapter = new FileSync('vocabularyDB.json');
+let db = low(adapter);
 
 
 const EditableContext = React.createContext(undefined);
@@ -125,6 +125,8 @@ type SearchableEditableTableStates = {
   dataSource: any,
   columns: any,
   searchText: string,
+  selectedRowKeys: Array<number>,
+  tableLoading: boolean,
 };
 
 type sortOrder = "ascend" | "descend" ;
@@ -141,6 +143,8 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     this.state = {
       dataSource: db.get('vocabularies').value(),
       searchText: '',
+      tableLoading: false,
+      selectedRowKeys: [],
       columns: [
         {
           title: 'Vocabulary',
@@ -221,13 +225,25 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
-    this.getColumnSearchProps = this.getColumnSearchProps.bind(this)
-    this.reload = this.reload.bind(this)
+    this.getColumnSearchProps = this.getColumnSearchProps.bind(this);
+    this.reload = this.reload.bind(this);
+    this.onSelectChange = this.onSelectChange.bind(this);
+    this.batchDelete = this.batchDelete.bind(this);
   }
 
   reload = () => {
-    this.setState({ dataSource: db.get('vocabularies').value() });
-    message.success(`Successfully reloaded.`, 2);
+    let low = require('lowdb');
+    let FileSync = require('lowdb/adapters/FileSync');
+    let adapter = new FileSync('vocabularyDB.json');
+    let db = low(adapter);
+    db.read();
+    console.log("The latest dataSource is: ");
+    console.log(db.get('vocabularies').value());
+    this.setState({ dataSource: db.get('vocabularies').value() , tableLoading: true});
+    setTimeout(() => {
+      this.setState({ tableLoading: false});
+      message.success(`Successfully reloaded.`, 2);
+    }, 1000);
   };
 
   handleDelete = record => {
@@ -236,6 +252,8 @@ export default class SearchableEditableTable extends React.Component<SearchableE
       .remove({key: record.key})
       .write();
     this.setState({ dataSource: db.get('vocabularies').value() });
+    const {selectedRowKeys} = this.state;
+    this.setState({ selectedRowKeys: selectedRowKeys.filter(key => key!=record.key) });
     message.success(` "${record.vocabulary}" was deleted from your database.`, 2);
   };
 
@@ -311,8 +329,26 @@ export default class SearchableEditableTable extends React.Component<SearchableE
     this.setState({ searchText: '' });
   };
 
+  onSelectChange = selectedRowKeys => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    this.setState({ selectedRowKeys });
+  };
+
+  batchDelete = () => {
+    const {selectedRowKeys} = this.state;
+    const amount = selectedRowKeys.length;
+    selectedRowKeys.forEach( selectedRowKey => {
+      db.read();
+      db.get('vocabularies')
+        .remove({key: selectedRowKey})
+        .write();
+    } );
+    this.setState({ dataSource: db.get('vocabularies').value() });
+    this.setState({ selectedRowKeys: [] });
+    message.success(` ${amount} vocabular(y/ies) were deleted from your database.`, 2);
+  };
+
   render() {
-    const { dataSource } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
@@ -334,22 +370,35 @@ export default class SearchableEditableTable extends React.Component<SearchableE
         }),
       };
     });
+    const {selectedRowKeys} = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
+
     return (
       <div className="table-operations" >
-        <Tooltip placement="right" title={"Click to refresh after importing vocabularies."}>
-          <Button  onClick={this.reload} type="primary" icon="import" size='large' style={{ float: 'left', marginBottom: '10px' }} >
-           Refresh
+        <Tooltip placement="topLeft" title={"Click to refresh after importing vocabularies."}>
+          <Button  onClick={this.reload} type="primary" icon="sync" size='large' style={{ float: 'left', marginBottom: '10px' }} >
+           Refresh List
          </Button>
         </Tooltip>
-         <Divider />
+        <Tooltip placement="topRight" title={"Click to delete all the selected vocabularies."}>
+        <Button  onClick={this.batchDelete} type="danger" icon="delete" size='large' style={{ float: 'left', marginLeft: '10px', marginBottom: '10px' }} >
+          Batch Delete
+        </Button>
+        </Tooltip>
+        <Divider />
 
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
+          rowSelection={ rowSelection }
           bordered
-          dataSource={dataSource}
+          loading = {this.state.tableLoading}
+          dataSource={this.state.dataSource}
           columns={columns}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 30 }}
           expandedRowRender={ (record: any) => {
             if(record.paragraph !== ''){
               let reExp = new RegExp(record.vocabularyOrign, "g");
