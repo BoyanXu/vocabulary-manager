@@ -38,7 +38,7 @@ export default class EditPhase extends React.Component<EditPhaseProps, EditPhase
           color: '#f542b9'
         }}>
           <Steps current={this.state.atStep}>
-            <Step  status="finish" title="Click" description="Click on vocabulary/sentence to edit."  icon={<Icon type="select" />} />
+            <Step  status="finish" title="Click" description="Click on word/ sentence to edit."  icon={<Icon type="select" />} />
             <Step  status="finish" title="Edit" description="Edit the vocabulary." icon={<Icon type="edit" />} />
             <Step  status="finish" title="Enter" description="Press <ENTER> to save." icon={<Icon type="enter" />}/>
           </Steps>

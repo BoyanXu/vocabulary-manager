@@ -40,7 +40,7 @@ export default class EditPhase extends React.Component<EditPhaseProps, EditPhase
           <Steps current={this.state.atStep}>
             <Step  status="finish" title="Date filter" description="Filter target words by Date."  icon={<Icon type="calendar" />} />
             <Step  status="finish" title="Select All" description="Select all filtered words to export." icon={<Icon type="unordered-list" />} />
-            <Step  status="finish" title="Choose Format" description="Choose the format (like .md) to export." icon={<Icon type="upload" />}/>
+            <Step  status="finish" title="Export" description="Export Anki file to target folder." icon={<Icon type="upload" />}/>
           </Steps>
         </Header>
         <Content style={{ margin: '24px 16px 0 16px', height: '85vh', overflow: 'auto' }}>
