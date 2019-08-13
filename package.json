@@ -54,7 +54,7 @@
   },
   "main": "./app/main.prod.js",
   "build": {
-    "productName": "ElectronReact",
+    "productName": "Vocabulary Manager",
     "appId": "org.develar.ElectronReact",
     "files": [
       "app/dist/",
@@ -98,48 +98,39 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate",
+      "owner": "BoyanXu",
+      "repo": "vocabulary-manager",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/BoyanXu/vocabulary-picker.git"
   },
   "author": {
-    "name": "Electron React Boilerplte Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Boyan Xu",
+    "email": "bx376@yahoo.com",
+    "url": "boyan-nyu.com"
   },
   "contributors": [
     {
-      "name": "Vikram Rangaraj",
-      "email": "vikr01@icloud.com",
-      "url": "https://github.com/vikr01"
-    },
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
+      "name": " ",
+      "email": " ",
+      "url": " "
     }
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/BoyanXu/vocabulary-picker/issues"
   },
   "keywords": [
     "electron",
-    "boilerplate",
     "react",
     "redux",
     "typescript",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "webpack"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/BoyanXu/vocabulary-picker#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
