@@ -1,9 +1,14 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip } from 'antd';
+import { Table, Input, Button, Form, Icon, message, Divider, Tooltip, DatePicker } from 'antd';
 import Highlighter from 'react-highlight-words';
 
+const fs = require('fs');
+
 const styles = require('./SearchableEditableTable.css');
+const { dialog } = require('electron').remote;
+
+const { RangePicker } = DatePicker;
 
 let low = require('lowdb');
 let FileSync = require('lowdb/adapters/FileSync');
@@ -129,10 +134,10 @@ type SearchableEditableTableStates = {
   tableLoading: boolean,
 };
 
-function fetchData(){
-  db.read();
-  return db.get('vocabularies').value();
-}
+// function fetchData(){
+//   db.read();
+//   return db.get('vocabularies').value();
+// }
 
 // type sortOrder = 'ascend' | 'descend' ;
 // const descend: sortOrder = 'descend' as sortOrder;
@@ -146,7 +151,7 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: fetchData(),
+      dataSource: this.fetchData(),
       searchText: '',
       tableLoading: false,
       selectedRowKeys: [],
@@ -158,15 +163,13 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
           width: '15%',
           className: styles.vocabularyColumn,
           sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0),
-          ...this.getColumnSearchProps('vocabulary')
         },
         {
           title: 'Sentence',
           dataIndex: 'sentence',
           key: 'sentence',
-          width: '60%',
+          width: '55%',
           className: styles.sentenceColumn,
-          ...this.getColumnSearchProps('sentence'),
           render: (sentence: string, thisRow) => {
             {
               if (!sentence.includes(thisRow.vocabularyOrign) && !sentence.includes(thisRow.vocabulary)) {
@@ -197,8 +200,9 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
           dataIndex: 'time',
           key: 'time',
           align: center,
-          width: '10%',
-          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
+          width: '20%',
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time),
+          ...this.getPeriodSearchProps('time')
         },
         {
           title: 'Url',
@@ -214,26 +218,27 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
             </div>
           )
         },
-        {
-          title: 'Operation',
-          dataIndex: 'operation',
-          align: center,
-          width: '15%',
-          render: (text, record) =>
-            this.state.dataSource.length >= 1 ? (
-              <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
-                <Button href="#" type="danger"> Delete </Button>
-              </Popconfirm>
-            ) : null
-        }
+        // {
+        //   title: 'Operation',
+        //   dataIndex: 'operation',
+        //   align: center,
+        //   width: '15%',
+        //   render: (text, record) =>
+        //     this.state.dataSource.length >= 1 ? (
+        //       <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record)}>
+        //         <Button href="#" type="danger"> Delete </Button>
+        //       </Popconfirm>
+        //     ) : null
+        // }
       ]
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSave = this.handleSave.bind(this);
-    this.getColumnSearchProps = this.getColumnSearchProps.bind(this);
+    this.getPeriodSearchProps = this.getPeriodSearchProps.bind(this);
     // this.reload = this.reload.bind(this);
     this.onSelectChange = this.onSelectChange.bind(this);
     this.batchDelete = this.batchDelete.bind(this);
+    this.handleJSON2Anki = this.handleJSON2Anki.bind(this);
   }
 
   // reload = () => {
@@ -252,6 +257,11 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
   //     message.success(`Successfully reloaded.`, 2);
   //   }, 300);
   // };
+
+  fetchData(){
+    db.read();
+    return db.get('vocabularies').value();
+  }
 
   handleDelete = record => {
     db.read();
@@ -275,19 +285,33 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
     message.success(` "${record.vocabulary}" got updated.`, 2);
   };
 
-  getColumnSearchProps = dataIndex => ({
+  getPeriodSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
-        <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+        {/*<Input*/}
+        {/*  ref={node => {*/}
+        {/*    this.searchInput = node;*/}
+        {/*  }}*/}
+        {/*  placeholder={`Search ${dataIndex}`}*/}
+        {/*  value={selectedKeys[0]}*/}
+        {/*  onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}*/}
+        {/*  onPressEnter={() => this.handleSearch(selectedKeys, confirm)}*/}
+        {/*  style={{ width: 188, marginBottom: 8, display: 'block' }}*/}
+        {/*/>*/}
+        <div>
+        <RangePicker
+          ref={node => { this.searchInput = node} }
+          onChange={  (dateMomentPair, dateStrPair) => {
+            console.log("onChange received props: dateStrPair");
+            console.log(dateStrPair);
+            setSelectedKeys(dateStrPair ? [ dateStrPair[0] + '|' + dateStrPair[1] ] : []);
+            this.handleSearch(selectedKeys,confirm)
+          } }
           style={{ width: 188, marginBottom: 8, display: 'block' }}
-        />
+        >
+        </RangePicker>
+        </div>
+
         <Button
           type="primary"
           onClick={() => this.handleSearch(selectedKeys, confirm)}
@@ -303,13 +327,15 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }}/>
+      <Icon type="calendar" style={{ color: filtered ? '#1890ff' : undefined }}/>
     ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      let dateRangeStr: Array<string> = value.split('|');
+      let MomentLowBd = Date.parse(dateRangeStr[0]);
+      let MomentUpBd  = Date.parse(dateRangeStr[1]);
+      let RecordMoment = Date.parse(record.time);
+      return MomentLowBd <= RecordMoment && RecordMoment <= MomentUpBd;
+    },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
         setTimeout(() => this.searchInput.select());
@@ -355,6 +381,38 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
     message.success(` ${amount} vocabular(y/ies) were deleted from your database.`, 2);
   };
 
+  handleJSON2Anki(){
+
+    let folderPath: string = dialog.showOpenDialog({ properties: ['openDirectory'] })[0];
+    let fileName: string = folderPath + '/' + 'IMPORT me to Anki' + '.txt';
+
+
+    const { selectedRowKeys } = this.state;
+    const amount = selectedRowKeys.length;
+
+    const fd = fs.openSync(fileName,'w+');
+
+    db.read();
+    selectedRowKeys.forEach(selectedRowKey => {
+      let json = db.get('vocabularies').find({ key: selectedRowKey }).value();
+      console.log(json);
+
+      let vocabulary = json.vocabulary.charAt(0).toUpperCase() + json.vocabulary.slice(1); // Uppercase the first character
+      let sentence = '【Sentence】 ' + json.sentence;
+      let explanation = '【Explanation】 (Please install related Adds-on to query explanation from .mdx dictionary)';
+      let paragraph = '【Paragraph】 ' + json.paragraph;
+      let url = '【Url】 ' + json.url;
+      let time = '【Time Imported】 ' + json.time;
+      fs.write(fd , vocabulary + '`' + sentence + '`' + explanation + '`' +  paragraph + '`' + url + '`' + time + '\n' , err => {
+        if(err) {
+          return console.log(err);
+        }
+      })
+    });
+    message.success(` ${amount} vocabular(y/ies) were exported as 'IMPORT to Anki.txt'.`, 2);
+  }
+  
+
   render() {
     const components = {
       body: {
@@ -377,11 +435,11 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
         })
       };
     });
-    // const { selectedRowKeys } = this.state;
-    // const rowSelection = {
-    //   selectedRowKeys,
-    //   onChange: this.onSelectChange
-    // };
+    const { selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+    };
 
     return (
       <div className="table-operations">
@@ -392,9 +450,9 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
         {/*  </Button>*/}
         {/*</Tooltip>*/}
         <Tooltip placement="topRight" title={'Click to delete all the selected vocabularies.'}>
-          <Button onClick={this.batchDelete} type="danger" icon="delete" size='large' ghost={true}
+          <Button onClick={this.handleJSON2Anki} type="primary" icon="delete" size='large' ghost={true}
                   style={{ float: 'left', marginLeft: '10px', marginBottom: '10px' }}>
-            Delete Selected
+            Export to Anki
           </Button>
         </Tooltip>
         <Divider/>
@@ -402,7 +460,7 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
         <Table
           components={components}
           rowClassName={() => 'editable-row'}
-          // rowSelection={rowSelection}
+          rowSelection={rowSelection}
           bordered
           loading={this.state.tableLoading}
           dataSource={this.state.dataSource}

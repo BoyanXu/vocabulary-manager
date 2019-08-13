@@ -1,7 +1,9 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip, DatePicker} from 'antd';
 import Highlighter from 'react-highlight-words';
+
+const { RangePicker } = DatePicker;
 
 const styles = require('./SearchableEditableTable.css');
 
@@ -129,10 +131,10 @@ type SearchableEditableTableStates = {
   tableLoading: boolean,
 };
 
-function fetchData(){
-  db.read();
-  return db.get('vocabularies').value();
-}
+// function fetchData(){
+//   db.read();
+//   return db.get('vocabularies').value();
+// }
 
 // type sortOrder = 'ascend' | 'descend' ;
 // const descend: sortOrder = 'descend' as sortOrder;
@@ -146,7 +148,7 @@ export default class SearchableEditableTable extends React.Component<SearchableE
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: fetchData(),
+      dataSource: this.fetchData(),
       searchText: '',
       tableLoading: false,
       selectedRowKeys: [],
@@ -200,7 +202,8 @@ export default class SearchableEditableTable extends React.Component<SearchableE
           key: 'time',
           align: center,
           width: '10%',
-          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time)
+          sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time),
+          ...this.getPeriodSearchProps('time')
         },
         {
           title: 'Url',
@@ -254,6 +257,12 @@ export default class SearchableEditableTable extends React.Component<SearchableE
   //     message.success(`Successfully reloaded.`, 2);
   //   }, 300);
   // };
+
+  fetchData = () => {
+    db.read();
+    return db.get('vocabularies').value();
+  };
+
 
   handleDelete = record => {
     db.read();
@@ -326,6 +335,62 @@ export default class SearchableEditableTable extends React.Component<SearchableE
       />
     )
   });
+
+  getPeriodSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <div>
+          <RangePicker
+            ref={node => { this.searchInput = node} }
+            onChange={  (dateMomentPair, dateStrPair) => {
+              console.log("onChange received props: dateStrPair");
+              console.log(dateStrPair);
+              setSelectedKeys(dateStrPair ? [ dateStrPair[0] + '|' + dateStrPair[1] ] : []);
+              this.handleSearch(selectedKeys,confirm)
+            } }
+            style={{ width: 188, marginBottom: 8, display: 'block' }}
+          >
+          </RangePicker>
+        </div>
+
+        <Button
+          type="primary"
+          onClick={() => this.handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+          style={{ width: 90, marginRight: 8 }}
+        >
+          Search
+        </Button>
+        <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          Reset
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="calendar" style={{ color: filtered ? '#1890ff' : undefined }}/>
+    ),
+    onFilter: (value, record) => {
+      let dateRangeStr: Array<string> = value.split('|');
+      let MomentLowBd = Date.parse(dateRangeStr[0]);
+      let MomentUpBd  = Date.parse(dateRangeStr[1]);
+      let RecordMoment = Date.parse(record.time);
+      return MomentLowBd <= RecordMoment && RecordMoment <= MomentUpBd;
+    },
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout(() => this.searchInput.select());
+      }
+    },
+    render: text => (
+      <Highlighter
+        highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        searchWords={[this.state.searchText]}
+        autoEscape
+        textToHighlight={text.toString()}
+      />
+    )
+  })
 
 
   handleSearch = (selectedKeys, confirm) => {

@@ -38,9 +38,9 @@ export default class EditPhase extends React.Component<EditPhaseProps, EditPhase
           color: '#f542b9'
         }}>
           <Steps current={this.state.atStep}>
-            <Step  status="finish" title="Click" description="Click on vocabulary/sentence to edit."  icon={<Icon type="select" />} />
-            <Step  status="finish" title="Edit" description="Edit the vocabulary." icon={<Icon type="edit" />} />
-            <Step  status="finish" title="Enter" description="Press <ENTER> to save." icon={<Icon type="enter" />}/>
+            <Step  status="finish" title="Date filter" description="Filter target words by Date."  icon={<Icon type="calendar" />} />
+            <Step  status="finish" title="Select All" description="Select all filtered words to export." icon={<Icon type="unordered-list" />} />
+            <Step  status="finish" title="Choose Format" description="Choose the format (like .md) to export." icon={<Icon type="upload" />}/>
           </Steps>
         </Header>
         <Content style={{ margin: '24px 16px 0 16px', height: '85vh', overflow: 'auto' }}>

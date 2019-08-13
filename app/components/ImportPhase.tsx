@@ -33,7 +33,7 @@ function MyDropzone(props: DropzoneProps) {
           props.pushNewList(JSON.parse(listAsText));
 
           if (loadedCounter === acceptedFiles.length) {
-            message.success(` There are ${loadedCounter.toString()} more list(s) loaded.`, 2);
+            message.success(` There are ${loadedCounter.toString()} list(s) loaded.`, 2);
             props.openStepFinish();
           }
         }

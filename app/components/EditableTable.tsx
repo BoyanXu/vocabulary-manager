@@ -127,9 +127,9 @@ type EditableTableStates = {
   columns: any,
 };
 
-type sortOrder = "ascend" | "descend" ;
-const ascend: sortOrder = "ascend" as sortOrder;
-const descend: sortOrder = "descend" as sortOrder;
+// type sortOrder = "ascend" | "descend" ;
+// const ascend: sortOrder = "ascend" as sortOrder;
+// const descend: sortOrder = "descend" as sortOrder;
 
 type align = "left" | "center" | "right";
 const center: align = "center" as align;
@@ -147,7 +147,7 @@ export default class EditableTable extends React.Component<EditableTableProps, E
           editable: true,
           width: '15%',
           className: styles.vocabularyColumn,
-          defaultSortOrder: ascend,
+          // defaultSortOrder: ascend,
           sorter: (a, b) => a.vocabulary.toLowerCase().charCodeAt(0) - b.vocabulary.toLowerCase().charCodeAt(0)  ,
         },
         {
@@ -184,7 +184,7 @@ export default class EditableTable extends React.Component<EditableTableProps, E
           key: 'time',
           align: center,
           width: '10%',
-          defaultSortOrder: descend,
+          // defaultSortOrder: descend,
           sorter: (a, b) => Date.parse(a.time) - Date.parse(b.time) ,
         },
         {
