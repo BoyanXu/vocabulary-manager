@@ -1,11 +1,18 @@
 import * as React from 'react';
 import 'antd/dist/antd.css';
 import { Table, Input, Button, Popconfirm, Form, Icon, Tooltip} from 'antd';
+import { remote } from 'electron';
+
 const styles = require('./EditableTable.css');
+
+const path = require('path');
+const userDataPath = remote.app.getPath('userData');
+const dbPath = path.join(userDataPath,'vocabularyDB.json');
+console.log(dbPath);
 
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('vocabularyDB.json');
+const adapter = new FileSync(dbPath);
 const db = low(adapter);
 
 

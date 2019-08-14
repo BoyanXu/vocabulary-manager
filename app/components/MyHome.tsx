@@ -4,7 +4,9 @@ import './MyHome.css';
 import ImportLayout from './ImportPhase';
 import EditPhase from './EditPhase';
 import ExportPhase from './ExportPhase';
-import { Avatar, Icon, Layout, Menu, message } from 'antd';
+import { Avatar, Icon, Layout, Menu, notification} from 'antd';
+import { remote } from 'electron';
+import * as fs from 'fs';
 
 const { Header, Sider } = Layout;
 // const {remote} = require('electron');
@@ -13,12 +15,13 @@ type MyHomeProps = {};
 
 type MyHomeStates = {
   atPhase: string,
+  avatarNotified: boolean,
 };
 
 export default class MyHome extends React.Component<MyHomeProps, MyHomeStates> {
   constructor(props: MyHomeProps){
     super(props);
-    this.state = { atPhase: 'importPhase' };
+    this.state = { atPhase: 'importPhase' , avatarNotified: false };
     this.handlePhaseSwitch = this.handlePhaseSwitch.bind(this);
     this.getAvatar = this.getAvatar.bind(this);
   }
@@ -30,12 +33,32 @@ export default class MyHome extends React.Component<MyHomeProps, MyHomeStates> {
   }
 
   getAvatar( ){
-    try{
-      return require('../../resources/avatar.png')
+    const path = require('path');
+    const userDataPath = remote.app.getPath('userData');
+    const avatarPath = path.join(userDataPath,'avatar.png');
+    console.log(avatarPath);
+
+    if (fs.existsSync(avatarPath)) {
+      return avatarPath
     }
-    catch(err){
-      console.log(err);
-      message.error(` Please ensure the avatar file you uploaded end up with .png`, 5);
+    if (this.state.avatarNotified) {
+      return require('../../resources/avatarDefault.png')
+    }
+    else {
+      const openNotificationWithIcon = type => {
+        notification[type]({
+          message: 'Customized Avatar Image not found',
+          description:
+            `We didn't detect your customized avatar at folder: ${avatarPath}. \n
+            \n
+             Although the software is bug-free to use without customized avatar, we highly recommend you to set your favorite avatar in order to get best user experience.    
+             To set customized avatar, simply name your avatar image as 'avatar.png' and put it under folder: ${avatarPath}
+             then restart the software.
+             `,
+        });
+      };
+      openNotificationWithIcon('warning');
+      this.setState({avatarNotified: true});
       return require('../../resources/avatarDefault.png')
     }
   }

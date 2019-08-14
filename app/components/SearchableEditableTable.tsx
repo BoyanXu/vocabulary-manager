@@ -2,14 +2,20 @@ import * as React from 'react';
 import 'antd/dist/antd.css';
 import { Table, Input, Button, Popconfirm, Form, Icon, message, Divider, Tooltip, DatePicker} from 'antd';
 import Highlighter from 'react-highlight-words';
+import { remote } from 'electron';
 
 const { RangePicker } = DatePicker;
 
 const styles = require('./SearchableEditableTable.css');
 
+const path = require('path');
+const userDataPath = remote.app.getPath('userData');
+const dbPath = path.join(userDataPath,'vocabularyDB.json');
+console.log(dbPath);
+
 let low = require('lowdb');
 let FileSync = require('lowdb/adapters/FileSync');
-let adapter = new FileSync('vocabularyDB.json');
+let adapter = new FileSync(dbPath);
 let db = low(adapter);
 
 
