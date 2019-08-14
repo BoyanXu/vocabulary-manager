@@ -1,6 +1,6 @@
 {
   "name": "erb-typescript-example",
-  "productName": "ElectronReact",
+  "productName": "VocabularyManager",
   "version": "0.17.1",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
@@ -55,7 +55,7 @@
   "main": "./app/main.prod.js",
   "build": {
     "productName": "Vocabulary Manager",
-    "appId": "org.develar.ElectronReact",
+    "appId": "org.develar.VocabularyManager",
     "files": [
       "app/dist/",
       "app/app.html",
