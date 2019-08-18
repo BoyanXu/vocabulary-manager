@@ -25,7 +25,7 @@ To change the default icon into your favorite avatar, place a `png` image named 
 
 (Mac User) `Macintosh HD/Users/YOUR_USERNAME/Library/Application Support/ElectronReact/`
 
-(Win User) `placeholder`
+(Win User) `C:\Users\YOUR_USERNAME\AppData\Roaming\VocabularyManager\avatar.png`
 
 Then restart Vocabulary Manager to update the change.
 
@@ -126,9 +126,9 @@ Vocabulary Manager 是一个跨平台（Mac/Win/Linux）的桌面应用，用于
 
 将`avatar.png` 放置于如下文件路径
 
-(Mac 用户) `Macintosh HD/Users/YOUR_USERNAME/Library/Application Support/ElectronReact/`
+(Mac 用户) `Macintosh HD/Users/你的用户名/Library/Application Support/ElectronReact/`
 
-(Win 用户) `placeholder`
+(Win 用户) `C:\Users\你的用户名\AppData\Roaming\VocabularyManager\avatar.png`
 
 之后重启 Vocabulary Manager 以更新设置。
 
