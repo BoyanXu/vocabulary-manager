@@ -455,7 +455,7 @@ export default class DateSelectableTable extends React.Component<SearchableEdita
         {/*    Refresh List*/}
         {/*  </Button>*/}
         {/*</Tooltip>*/}
-        <Tooltip placement="topRight" title={'Click to delete all the selected vocabularies.'}>
+        <Tooltip placement="topRight" title={'Click to export all selected vocabularies.'}>
           <Button onClick={this.handleJSON2Anki} type="primary" icon="delete" size='large' ghost={true}
                   style={{ float: 'left', marginLeft: '10px', marginBottom: '10px' }}>
             Export to Anki
