@@ -10,7 +10,7 @@ Vocabulary Manager is a cross-platform (Mac/Win/Linux) desktop application that 
 
 Check the Video Tutorial for more help: https://www.youtube.com/watch?v=zhhA5mQWdlw&t=44s
 
-Read this page in other languages：[English](https://github.com/BoyanXu/vocabulary-manager/blob/master/README.md), [简体中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-cn.md), [繁體中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-cn.md)
+_Read this page in other languages：_ [English](https://github.com/BoyanXu/vocabulary-manager/blob/master/README.md), [简体中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-cn.md), [繁體中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-tr.md)
 
 ![](https://i.imgur.com/cFdWe9U.png)
 

@@ -10,7 +10,7 @@ Vocabulary Manager 是一個跨平臺（Mac/Win/Linux）的桌面應用，用於
 
 具體使用方法，參見視頻教程：http://www.iqiyi.com/w_19s9sjbog9.html
 
-Read this page in other languages：[English](https://github.com/BoyanXu/vocabulary-manager/blob/master/README.md), [簡體中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-cn.md), [繁體中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-cn.md)
+_Read this page in other languages：_ [English](https://github.com/BoyanXu/vocabulary-manager/blob/master/README.md), [简体中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-cn.md), [繁體中文](https://github.com/BoyanXu/vocabulary-manager/blob/master/README-zh-tr.md)
 
 ![](https://i.imgur.com/cFdWe9U.png)
 
