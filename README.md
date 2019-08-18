@@ -105,7 +105,7 @@ https://ankiweb.net/shared/info/1807206748
 > This addon query words definitions or examples etc. fields from local or online dictionaries to fill into the Anki note.
 > It forks from [WordQuery](https://ankiweb.net/shared/info/775418273), added **multi-thread** feature, improve stability, and some other features.
 
-
+<br/>
 
 
 ## Contributors
@@ -225,6 +225,7 @@ https://ankiweb.net/shared/info/1807206748
 
 用于为词条批量匹配`.mdx`词典 内的释义。
 
+<br/>
 
 ## 贡献者
 
