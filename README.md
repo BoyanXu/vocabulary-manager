@@ -108,6 +108,17 @@ https://ankiweb.net/shared/info/1807206748
 <br/>
 <br/>
 
+
+## Contributors
+
+@Ge Gao designed the icon for Vocabulary Picker.
+
+@Zhengyuan is main tester of the Vocabulary Picker.
+
+@Boyan Xu designed the architecture of Vocabulary Picker and implemented it.
+
+
+
 # Vocabulary Manager
 
 Vocabulary Manager 是一个跨平台（Mac/Win/Linux）的桌面应用，用于管理从 [Vocabulary Picker](https://github.com/BoyanXu/vocabulary-picker) 收集的词汇。同时，Vocabulary Manager 也支持将自身管理的单词数据批量地导出为 抽认卡软件 [Anki](https://apps.ankiweb.net/) 可以识别的`.txt` 文件，以便用户对词汇进行更为灵活的管理。
@@ -211,3 +222,14 @@ https://ankiweb.net/shared/info/1807206748
 > This addon query words definitions or examples etc. fields from local or online dictionaries to fill into the Anki note.
 
 用于为词条批量匹配`.mdx`词典 内的释义。
+
+
+## 贡献者
+
+
+@高歌 为 Vocabulary Picker 设计了图标。
+
+@正源 是 Vocabulary Picker 的主要测试者.
+
+@Boyan 设计并实现了 Vocabulary Picker 的架构。
+
