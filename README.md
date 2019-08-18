@@ -1,4 +1,9 @@
-![](https://i.imgur.com/Nn9c78Q.png)
+
+<p align="center">
+  <img src="https://i.imgur.com/Nn9c78Q.png">
+</p>
+
+<br/>
 
 # Vocabulary Manager
 
@@ -99,6 +104,9 @@ https://ankiweb.net/shared/info/1807206748
 
 > This addon query words definitions or examples etc. fields from local or online dictionaries to fill into the Anki note.
 > It forks from [WordQuery](https://ankiweb.net/shared/info/775418273), added **multi-thread** feature, improve stability, and some other features.
+
+<br/>
+<br/>
 
 # Vocabulary Manager
 
