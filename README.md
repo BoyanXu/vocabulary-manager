@@ -105,8 +105,7 @@ https://ankiweb.net/shared/info/1807206748
 > This addon query words definitions or examples etc. fields from local or online dictionaries to fill into the Anki note.
 > It forks from [WordQuery](https://ankiweb.net/shared/info/775418273), added **multi-thread** feature, improve stability, and some other features.
 
-<br/>
-<br/>
+
 
 
 ## Contributors
@@ -117,6 +116,9 @@ https://ankiweb.net/shared/info/1807206748
 
 @Boyan Xu designed the architecture of Vocabulary Picker and implemented it.
 
+
+<br/>
+<br/>
 
 
 # Vocabulary Manager
