@@ -116,8 +116,8 @@ https://ankiweb.net/shared/info/1807206748
 
 ## 贡献者
 
-@高歌 为 Vocabulary Picker 设计了图标。
+@高歌 为 Vocabulary Manager 设计了图标。
 
-@正源 是 Vocabulary Picker 的主要测试者.
+@正源 是 Vocabulary Manager 的主要测试者。
 
-@Boyan 设计并实现了 Vocabulary Picker 的架构。
+@Boyan 设计并实现了 Vocabulary Manager 的架构。
