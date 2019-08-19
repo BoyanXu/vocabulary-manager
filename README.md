@@ -110,11 +110,11 @@ https://ankiweb.net/shared/info/1807206748
 
 ## Contributors
 
-@Ge Gao designed the icon for Vocabulary Picker.
+@Ge Gao designed the icon for Vocabulary Manager.
 
-@Zhengyuan is main tester of the Vocabulary Picker.
+@Zhengyuan is main tester of the Vocabulary Manager.
 
-@Boyan Xu designed the architecture of Vocabulary Picker and implemented it.
+@Boyan Xu designed the architecture of Vocabulary Manager and implemented it.
 
 <br/>
 <br/>
