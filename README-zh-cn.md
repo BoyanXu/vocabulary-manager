@@ -16,7 +16,7 @@ _Read this page in other languages：_ [English](https://github.com/BoyanXu/voca
 
 ## 安装
 
-按照如下网页的指导，进行安装： https://github.com/BoyanXu/vocabulary-manager/releases。
+按照如下网页的指导，进行安装： https://github.com/BoyanXu/vocabulary-manager/releases
 
 ## 个性化
 
